@@ -39,3 +39,6 @@ build/
 
 .idea
 /backend/.idea
+
+# Environment files
+.env
