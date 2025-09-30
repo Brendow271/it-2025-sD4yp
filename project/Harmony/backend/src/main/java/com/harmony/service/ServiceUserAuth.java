@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 public class ServiceUserAuth {
@@ -36,6 +38,27 @@ public class ServiceUserAuth {
 
         return savedUser;
     }
+
+    public UserAuth loginUser (String email, String password){
+
+        Optional<UserAuth> userAuthOptional = userAuthRepository.findByEmail(email);
+
+        if (userAuthOptional.isEmpty()){
+            throw new RuntimeException("Пользователь с email " + email + " не найден");
+        }
+
+        UserAuth user = userAuthOptional.get();
+
+        if (!passwordEncoder.matches(password, user.getPasswordHash())){
+            throw new RuntimeException("Неверный пароль");
+        }
+
+        user.setPasswordHash(null);
+        return user;
+    }
+
+    
+
     private void validateRegistrationData(String name, String email, String password){
 
         if (name == null || name.trim().isEmpty()){
