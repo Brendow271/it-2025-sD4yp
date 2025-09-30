@@ -3,6 +3,7 @@ package com.harmony.service;
 import com.harmony.entity.UserAuth;
 import com.harmony.repository.UserAuthRepository;
 import jakarta.transaction.Transactional;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,24 @@ public class ServiceUserAuth {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public UserAuth registerUser(String name, String email, String password){
 
-    
+        if (userAuthRepository.existsByEmail(email)){
+            throw new RuntimeException("Пользователь с данным email:" + email + "уже существует");
+        }
 
+        validateRegistrationData(name, email, password);
+
+        String hashedPassword = passwordEncoder.encode(password);
+
+        UserAuth user = new UserAuth(name, hashedPassword, email);
+
+        UserAuth savedUser = userAuthRepository.save(user);
+
+        savedUser.setPasswordHash(null);
+
+        return savedUser;
+    }
     private void validateRegistrationData(String name, String email, String password){
 
         if (name == null || name.trim().isEmpty()){
