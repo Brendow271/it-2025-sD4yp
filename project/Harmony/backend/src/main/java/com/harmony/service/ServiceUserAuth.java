@@ -71,6 +71,29 @@ public class ServiceUserAuth {
                 .orElseThrow(() -> new RuntimeException("Пользователь с Email " + email + " не найден"));
     }
 
+    public UserAuth updateUserStatus(Long userId, boolean active){
+        UserAuth user = getUserById(userId);
+        user.setActive(active);
+        return userAuthRepository.save(user);
+    }
+
+    public boolean updatePassword(Long userId, String oldPassword, String newPassword){
+        UserAuth user = getUserById(userId);
+
+        if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())){
+            throw new RuntimeException("Неверный старый пароль");
+        }
+
+        validatePassword(newPassword);
+
+        String hashedNewPassword = passwordEncoder.encode(newPassword);
+        user.setPasswordHash(hashedNewPassword);
+        userAuthRepository.save(user);
+
+        return true;
+
+    }
+
 
 
 
