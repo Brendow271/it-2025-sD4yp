@@ -57,7 +57,23 @@ public class ServiceUserAuth {
         return user;
     }
 
-    
+    public boolean isEmailExists(String email){
+        return userAuthRepository.existsByEmail(email);
+    }
+
+    public  UserAuth getUserById(Long userId){
+        return userAuthRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Пользователь с ID " + userId + " не найден"));
+    }
+
+    public  UserAuth getUserByEmail(String email){
+        return userAuthRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Пользователь с Email " + email + " не найден"));
+    }
+
+
+
+
 
     private void validateRegistrationData(String name, String email, String password){
 
