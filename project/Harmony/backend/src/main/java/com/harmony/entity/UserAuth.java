@@ -12,7 +12,7 @@ public class UserAuth {
 
     @Id
     @GeneratedValue
-    private Long user_id;
+    private Long userId;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -42,6 +42,7 @@ public class UserAuth {
     public String getName() {
         return name;
     }
+
 
     public void setName(String name) {
         this.name = name;
@@ -77,5 +78,13 @@ public class UserAuth {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
