@@ -2,6 +2,8 @@ package com.harmony.service;
 
 import com.harmony.entity.UserAuth;
 import com.harmony.repository.UserAuthRepository;
+import com.harmony.utils.JwtUtils;
+import com.harmony.dto.AuthResponse;
 import jakarta.transaction.Transactional;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class ServiceUserAuth {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtUtils jwtUtils;
+
     public UserAuth registerUser(String name, String email, String password){
 
         if (userAuthRepository.existsByEmail(email)){
@@ -29,17 +34,14 @@ public class ServiceUserAuth {
         validateRegistrationData(name, email, password);
 
         String hashedPassword = passwordEncoder.encode(password);
-
         UserAuth user = new UserAuth(name, hashedPassword, email);
-
         UserAuth savedUser = userAuthRepository.save(user);
-
         savedUser.setPasswordHash(null);
 
         return savedUser;
     }
 
-    public UserAuth loginUser (String email, String password){
+    public AuthResponse loginUser (String email, String password){
 
         Optional<UserAuth> userAuthOptional = userAuthRepository.findByEmail(email);
 
@@ -53,8 +55,30 @@ public class ServiceUserAuth {
             throw new RuntimeException("Неверный пароль");
         }
 
+        String token = jwtUtils.generateToken(user);
+
         user.setPasswordHash(null);
-        return user;
+        return new AuthResponse(token, user);
+    }
+
+    public UserAuth validateTokenAndGetUser(String token){
+        if (!jwtUtils.validateToken(token)){
+            throw new RuntimeException("Недействительный токен");
+        }
+
+        String email = jwtUtils.getEmailFromToken(token);
+        return getUserByEmail(email);
+    }
+
+    public String refreshToken(String token){
+        if (!jwtUtils.validateToken(token)){
+            throw new RuntimeException("Недействительный токен");
+        }
+
+        String email = jwtUtils.getEmailFromToken(token);
+        UserAuth user = getUserByEmail(email);
+
+        return jwtUtils.generateToken(user);
     }
 
     public boolean isEmailExists(String email){
@@ -93,9 +117,6 @@ public class ServiceUserAuth {
         return true;
 
     }
-
-
-
 
 
     private void validateRegistrationData(String name, String email, String password){
