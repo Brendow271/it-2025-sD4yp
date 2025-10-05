@@ -99,4 +99,10 @@ public class JwtUtils {
     }
 
 
+    public String extractTokenFromHeader(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")){
+            return authHeader.substring(7);
+        }
+        return null;
+    }
 }
