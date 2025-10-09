@@ -1,0 +1,110 @@
+services:
+  # Harmony Backend Application
+  harmony-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: harmony-backend
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    environment:
+      # Server Configuration
+      - SERVER_PORT=8080
+      - SERVER_CONTEXT_PATH=${SERVER_CONTEXT_PATH:-/}
+      
+      # Database Configuration
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-harmony_db}
+      - DB_USERNAME=${DB_USERNAME:-harmony_user}
+      - DB_PASSWORD=${DB_PASSWORD:-harmony_password}
+      
+      # Redis Configuration (отключено)
+      # - REDIS_HOST=redis
+      # - REDIS_PORT=6379
+      # - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      # - REDIS_TIMEOUT=${REDIS_TIMEOUT:-2000}
+      
+      # JWT Configuration
+      - JWT_SECRET=${JWT_SECRET:-harmony-secret-key-2024-music-tinder-app-very-secure-jwt-key-for-authentication}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      
+      # CORS Configuration
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3001}
+      - CORS_ALLOWED_METHODS=${CORS_ALLOWED_METHODS:-GET,POST,PUT,DELETE,OPTIONS}
+      - CORS_ALLOWED_HEADERS=${CORS_ALLOWED_HEADERS:-*}
+      - CORS_ALLOW_CREDENTIALS=${CORS_ALLOW_CREDENTIALS:-true}
+      
+      # Logging Configuration
+      - LOG_LEVEL_HARMONY=${LOG_LEVEL_HARMONY:-INFO}
+      - LOG_LEVEL_SECURITY=${LOG_LEVEL_SECURITY:-INFO}
+      - LOG_LEVEL_SQL=${LOG_LEVEL_SQL:-WARN}
+      - LOG_LEVEL_SQL_BINDER=${LOG_LEVEL_SQL_BINDER:-WARN}
+      
+      # Cache Configuration
+      - CACHE_TTL=${CACHE_TTL:-600000}
+      
+      # File Upload Configuration
+      - MAX_FILE_SIZE=${MAX_FILE_SIZE:-10MB}
+      - MAX_REQUEST_SIZE=${MAX_REQUEST_SIZE:-10MB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - harmony-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: harmony-postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME:-harmony_db}
+      - POSTGRES_USER=${DB_USERNAME:-harmony_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-harmony_password}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/main/resources/db/migration:/docker-entrypoint-initdb.d
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-harmony_user} -d ${DB_NAME:-harmony_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - harmony-network
+
+  # Nginx Reverse Proxy (опционально)
+  nginx:
+    image: nginx:alpine
+    container_name: harmony-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - harmony-backend
+    restart: unless-stopped
+    networks:
+      - harmony-network
+    profiles:
+      - nginx
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  harmony-network:
+    driver: bridge
