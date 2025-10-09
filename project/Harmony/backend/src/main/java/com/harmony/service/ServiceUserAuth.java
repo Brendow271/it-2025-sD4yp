@@ -36,9 +36,13 @@ public class ServiceUserAuth {
         String hashedPassword = passwordEncoder.encode(password);
         UserAuth user = new UserAuth(name, hashedPassword, email);
         UserAuth savedUser = userAuthRepository.save(user);
-        savedUser.setPasswordHash(null);
+         
+        UserAuth userResponse = new UserAuth(savedUser.getName(), null, savedUser.getEmail());
+        userResponse.setUserId(savedUser.getUserId());
+        userResponse.setCreatedAt(savedUser.getCreatedAt());
+        userResponse.setActive(savedUser.isActive());
 
-        return savedUser;
+        return userResponse;
     }
 
     public AuthResponse loginUser (String email, String password){
@@ -57,8 +61,13 @@ public class ServiceUserAuth {
 
         String token = jwtUtils.generateToken(user);
 
-        user.setPasswordHash(null);
-        return new AuthResponse(token, user);
+        // Создаем новый объект для возврата без пароля, чтобы не влиять на сохраненную запись
+        UserAuth userResponse = new UserAuth(user.getName(), null, user.getEmail());
+        userResponse.setUserId(user.getUserId());
+        userResponse.setCreatedAt(user.getCreatedAt());
+        userResponse.setActive(user.isActive());
+        
+        return new AuthResponse(token, userResponse);
     }
 
     public UserAuth validateTokenAndGetUser(String token){
