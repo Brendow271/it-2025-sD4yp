@@ -28,7 +28,7 @@ public class ServiceUserAuth {
     public UserAuth registerUser(String name, String email, String password){
 
         if (userAuthRepository.existsByEmail(email)){
-            throw new RuntimeException("Пользователь с данным email:" + email + "уже существует");
+            throw new RuntimeException("Пользователь с данным email:" + email + " уже существует");
         }
 
         validateRegistrationData(name, email, password);
