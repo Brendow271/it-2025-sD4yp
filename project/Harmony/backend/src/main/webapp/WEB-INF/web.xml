@@ -7,8 +7,4 @@
 
   <display-name>Harmony Backend</display-name>
   <description>Harmony - Музыкальный Tinder Backend Application</description>
-
-  <!-- Spring Boot автоматически настраивает контекст -->
-  <!-- Этот файл оставлен для совместимости с традиционными веб-приложениями -->
-  
 </web-app>
