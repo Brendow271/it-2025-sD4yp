@@ -1,0 +1,17 @@
+import Link from 'next/link';
+
+const Header = () =>{
+    return(
+        <header className = "grid grid-cols-3 items-center text-black bg-gray-300 px-8 h-20">
+            <div className="flex justify-start h-full"><Link href={'/'} className="flex items-center px-3 hover:bg-gray-400"><img className="w-8 h-8" src="/assets/settings.png" alt="Настройки"/></Link></div>
+            <div className="flex h-full justify-center text-2xl"><Link href={'/'} className="flex items-center px-3 hover:bg-gray-400">Harmony</Link></div>
+            <ul className = "flex items-center justify-end font-semibold text-base h-full">
+                <li className="flex h-full items-center hover:bg-gray-400 px-3"><Link href={'/pages/chat'}><img src="/assets/chat.png" alt="Чат" className="h-8 w-8"/></Link></li>
+                <li className="flex h-full items-center hover:bg-gray-400 px-3"><Link href={'/pages/likes'}><img src="/assets/heart.png" alt="Лайк" className="h-8 w-8"/></Link></li>
+                <li className="flex h-full items-center hover:bg-gray-400 px-3"><Link href={'/pages/auth'}><img src="/assets/user.png" alt="auth" className="h-8 w-8"/></Link></li>
+            </ul>
+        </header>
+    )
+}
+
+export default Header;
