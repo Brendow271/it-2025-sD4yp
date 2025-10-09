@@ -20,6 +20,10 @@ public class AuthResponse {
         this.user = user;
     }
 
+    public AuthResponse(UserAuth user){
+        this.user = user;
+    }
+
     public String getToken() {
         return token;
     }
