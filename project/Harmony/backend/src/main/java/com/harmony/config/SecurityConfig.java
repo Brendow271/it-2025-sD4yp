@@ -49,6 +49,12 @@ public class SecurityConfig {
                 .requestMatchers("/health").permitAll()
                 .requestMatchers("/public/**").permitAll()
                 
+                // Swagger/OpenAPI документация
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/swagger-ui.html").permitAll()
+                .requestMatchers("/api-docs/**").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
+                
                 // Эндпоинты для разработки
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/error").permitAll()

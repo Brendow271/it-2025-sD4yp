@@ -6,6 +6,12 @@ import com.harmony.dto.RegisterRequest;
 import com.harmony.entity.UserAuth;
 import com.harmony.service.ServiceUserAuth;
 import com.harmony.utils.JwtUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +24,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("auth")
 @CrossOrigin(origins = "*")
+@Tag(name = "Authentication", description = "API для аутентификации пользователей")
 public class AuthController {
 
     @Autowired
@@ -26,6 +33,12 @@ public class AuthController {
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Operation(summary = "Регистрация нового пользователя", description = "Создает нового пользователя в системе")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Пользователь успешно зарегистрирован",
+                content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Ошибка валидации или пользователь уже существует")
+    })
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request){
         try {
@@ -45,6 +58,12 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Вход в систему", description = "Аутентификация пользователя по email и паролю")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Успешная аутентификация",
+                content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Неверные учетные данные")
+    })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request){
         try {
@@ -61,6 +80,11 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Валидация токена", description = "Проверяет валидность JWT токена")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Токен валиден"),
+        @ApiResponse(responseCode = "401", description = "Токен невалиден или отсутствует")
+    })
     @PostMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader){
         try {
