@@ -89,6 +89,13 @@
       <version>1.5</version>
     </dependency>
     
+    <!-- Environment variables from .env file -->
+    <dependency>
+      <groupId>io.github.cdimascio</groupId>
+      <artifactId>dotenv-java</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+    
     <!-- Development tools -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
