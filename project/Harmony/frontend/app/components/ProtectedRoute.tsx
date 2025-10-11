@@ -4,7 +4,7 @@ import {useContext} from "react";
 import {useAuth} from "../hooks/useAuth";
 import {ReactNode} from "react";
 
-interface ProtectedRoutePropsProps {
+interface ProtectedRouteProps {
     children: ReactNode;
     fallback?: ReactNode;
 }
