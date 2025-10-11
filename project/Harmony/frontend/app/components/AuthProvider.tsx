@@ -40,7 +40,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const login = async (email: string, password: string): Promise<boolean> => {
         try {
-            const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+            const response = await fetch("http://localhost:8080/auth/login", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
