@@ -5,6 +5,7 @@ import {useState} from "react";
 export default function RegistrationForm() {
 
     const [formData, setFormData] = useState({
+        name: "",
         email:"",
         password:"",
     });
@@ -25,7 +26,7 @@ export default function RegistrationForm() {
         setMessage("");
 
         try{
-            const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+            const response = await fetch("http://localhost:8080/auth/register", {
                 method: "POST",
                 headers:{
                     'content-type': 'application/json',
@@ -36,7 +37,7 @@ export default function RegistrationForm() {
 
             if (response.ok){
                 setMessage('Регистрация прошла успешно');
-                setFormData({email: '', password: ''});
+                setFormData({name: '', email: '', password: ''});
                 console.log('Регистрация прошла успешно', data);
             } else {
                 setMessage(data.message || 'Ошибка регистрации');
@@ -52,6 +53,7 @@ export default function RegistrationForm() {
     return (
         <div className="flex justify-center h-full items-center">
             <form onSubmit={handleSubmit} className="flex flex-col">
+                <input type="name" name = "name" id = "name" value = {formData.name} onChange = {handleChange} required placeholder="Username" />
                 <input type="email" name = "email" id = "email" value = {formData.email} onChange = {handleChange} required placeholder="Email" />
                 <input type="password" name = "password" id = "password" value = {formData.password} onChange = {handleChange} required placeholder="Password" />
                 <button type = "submit" disabled = {isLoading}>{isLoading ? 'Регистрация...' : 'Зарегистрироваться'}</button>
