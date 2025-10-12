@@ -1,5 +1,6 @@
 'use client';
 import RegistrationForm from "@/app/components/RegistrationForm";
+import React from 'react'
 import LoginForm from "../../components/LoginForm";
 export default function Auth(){
     return(
