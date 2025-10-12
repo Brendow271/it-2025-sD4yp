@@ -13,7 +13,7 @@ export default function LoginForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
 
-    const {login, isAuthentificated} = useAuth();
+    const {login, isAuthenticated} = useAuth();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
@@ -44,7 +44,7 @@ export default function LoginForm() {
             setIsLoading(false);
         }
     };
-    if (isAuthentificated) {
+    if (isAuthenticated) {
         return (
             <h1>Вы вошли в систему</h1>
         );
@@ -56,7 +56,6 @@ export default function LoginForm() {
                 <input type="email" name = "email" id = "email" value = {formData.email} onChange = {handleChange} required placeholder="Email" />
                 <input type="password" name = "password" id = "password" value = {formData.password} onChange = {handleChange} required placeholder="Password" />
                 <button type = "submit" disabled = {isLoading}>{isLoading ? 'Вход...' : 'Войти'}</button>
-
                 {message && (<div className={`${message.includes('успешн') ? 'text-green-100' : 'text-red-100'}`}>{message}</div>)}
             </form>
         </div>
