@@ -1,6 +1,9 @@
+import {ProtectedRoute} from "../../components/ProtectedRoute";
 import React from 'react'
 export default function Likes(){
     return(
-        <h1>Likes</h1>
+        <ProtectedRoute>
+            <h1>Likes</h1>
+        </ProtectedRoute>
     )
 }
