@@ -3,6 +3,7 @@
 import {createContext, useState, useEffect, ReactNode} from 'react';
 import {AuthContextType, User} from '../types/auth'
 import {authCookies} from "./common/cookies";
+import React from 'react';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
