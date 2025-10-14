@@ -6,8 +6,8 @@ export default function Auth(){
     return(
         <div className="flex justify-center h-full items-center">
             <div className="flex flex-col">
-                <h1>Аутентификация</h1>
                 <LoginForm/>
+                <RegistrationForm/>
             </div>
 
         </div>
