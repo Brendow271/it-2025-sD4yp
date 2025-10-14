@@ -51,11 +51,12 @@ export default function LoginForm() {
     }
 
     return(
-        <div className="flex justify-center h-full items-center">
-            <form onSubmit={handleSubmit} className="flex flex-col">
-                <input type="email" name = "email" id = "email" value = {formData.email} onChange = {handleChange} required placeholder="Email" />
-                <input type="password" name = "password" id = "password" value = {formData.password} onChange = {handleChange} required placeholder="Password" />
-                <button type = "submit" disabled = {isLoading}>{isLoading ? 'Вход...' : 'Войти'}</button>
+        <div className="flex flex-col justify-center h-full w-100 items-center border border-gray-200 bg-gray-200 px-4 py-4">
+            <h1 className="mb-4">Аутентификация</h1>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+                <input type="email" name = "email" id = "email" className="bg-white px-2" value = {formData.email} onChange = {handleChange} required placeholder="Email" />
+                <input type="password" name = "password" id = "password" className="bg-white px-2" value = {formData.password} onChange = {handleChange} required placeholder="Password" />
+                <button type = "submit" className="bg-gray-300 py-1 hover:bg-gray-400" disabled = {isLoading}>{isLoading ? 'Вход...' : 'Войти'}</button>
                 {message && (<div className={`${message.includes('успешн') ? 'text-green-100' : 'text-red-100'}`}>{message}</div>)}
             </form>
         </div>
