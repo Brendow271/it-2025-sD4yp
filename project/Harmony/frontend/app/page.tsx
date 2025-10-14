@@ -2,6 +2,7 @@
 
 import React, {useState} from "react";
 import {useAuth} from "./hooks/useAuth";
+import SwipeCards from "./components/SwipeCards";
 
 export default function Home() {
     const {logout, isAuthenticated} = useAuth();
@@ -14,6 +15,7 @@ export default function Home() {
         <div>
             <h1>
                 Home
+                <SwipeCards/>
             </h1>
 
         </div>
