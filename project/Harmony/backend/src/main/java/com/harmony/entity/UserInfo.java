@@ -10,24 +10,24 @@ public class UserInfo {
     @GeneratedValue
     private Long userId;
 
-    @Column(name = "age", nullable = true)
-    private Long age;
+    @Column(name = "age", nullable = false)
+    private Integer age;
 
-    @Column(name = "genres", nullable = false)
+    @Column(name = "genres", nullable = true)
     private String genres;
 
-    @Column(name = "instrument", nullable = false)
+    @Column(name = "instrument", nullable = true)
     private String instrument;
 
-    @Column(name = "location", nullable = false)
+    @Column(name = "location", nullable = true)
     private String location;
 
-    @Column(name = "about", nullable = true)
+    @Column(name = "about", nullable = false)
     private String about;
 
     public UserInfo(){}
 
-    public UserInfo(Long age, String about){
+    public UserInfo(Integer age, String about){
         this.age = age;
         this.about = about;
     }
@@ -35,11 +35,11 @@ public class UserInfo {
     public Long getUserId(){
         return userId;
     }
-    public Long getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(Long age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -74,4 +74,6 @@ public class UserInfo {
     public void setAbout(String about) {
         this.about = about;
     }
+
+
 }
