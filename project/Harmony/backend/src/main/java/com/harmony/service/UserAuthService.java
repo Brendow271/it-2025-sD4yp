@@ -5,7 +5,6 @@ import com.harmony.repository.UserAuthRepository;
 import com.harmony.utils.JwtUtils;
 import com.harmony.dto.AuthResponse;
 import jakarta.transaction.Transactional;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class ServiceUserAuth {
+public class UserAuthService {
 
     @Autowired
     private UserAuthRepository userAuthRepository;

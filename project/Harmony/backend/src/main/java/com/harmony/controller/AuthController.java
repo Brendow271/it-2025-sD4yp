@@ -4,7 +4,7 @@ import com.harmony.dto.AuthResponse;
 import com.harmony.dto.LoginRequest;
 import com.harmony.dto.RegisterRequest;
 import com.harmony.entity.UserAuth;
-import com.harmony.service.ServiceUserAuth;
+import com.harmony.service.UserAuthService;
 import com.harmony.utils.JwtUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,7 @@ import java.util.Map;
 public class AuthController {
 
     @Autowired
-    private ServiceUserAuth authService;
+    private UserAuthService authService;
 
     @Autowired
     private JwtUtils jwtUtils;
