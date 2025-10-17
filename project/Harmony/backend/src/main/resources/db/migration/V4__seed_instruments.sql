@@ -1,9 +1,4 @@
-CREATE TABLE instruments(
-    instrument_name VARCHAR(255) NOT NULL PRIMARY KEY,
-    instrument_type VARCHAR(100) NOT NULL
-);
-
-INSERT INTO instruments (instrument_name, instrument_type) VALUES 
+INSERT INTO instruments (instrument_name, instrument_type) VALUES
 -- Струнные инструменты
 ('Гитара', 'Струнные'),
 ('Электрогитара', 'Струнные'),
@@ -66,3 +61,5 @@ INSERT INTO instruments (instrument_name, instrument_type) VALUES
 -- Другие
 ('Дирижер', 'Прочие'),
 ('DJ-оборудование', 'Прочие');
+
+
