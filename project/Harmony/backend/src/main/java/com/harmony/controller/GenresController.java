@@ -34,7 +34,6 @@ public class GenresController {
                 responseCode = "200",
                 description = "Жанры успешно получены",
                 content = @Content(
-                    mediaType = "application/json",
                     schema = @Schema(implementation = GenresResponse.class)
                 )
             ),
