@@ -1,7 +1,3 @@
-CREATE TABLE genres(
-    genres_name VARCHAR(255) NOT NULL UNIQUE PRIMARY KEY
-);
-
 INSERT INTO genres (genres_name) VALUES 
 ('Рок'),
 ('Поп'),
@@ -33,3 +29,5 @@ INSERT INTO genres (genres_name) VALUES
 ('Инструментальная музыка'),
 ('Экспериментальная музыка'),
 ('Прогрессивный рок');
+
+
