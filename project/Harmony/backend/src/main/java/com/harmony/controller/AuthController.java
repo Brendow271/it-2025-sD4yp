@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -80,6 +81,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Валидация токена", description = "Проверяет валидность JWT токена")
+    @SecurityRequirement(name = "Bearer Authentication")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Токен валиден"),
         @ApiResponse(responseCode = "401", description = "Токен невалиден или отсутствует")
@@ -104,6 +106,12 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Обновление токена", description = "Обновляет JWT токен пользователя")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Токен успешно обновлен"),
+        @ApiResponse(responseCode = "401", description = "Токен невалиден или отсутствует")
+    })
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String authHeader){
         try {

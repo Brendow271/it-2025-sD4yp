@@ -3,12 +3,14 @@ package com.harmony.controller;
 import com.harmony.dto.GenresResponse;
 import com.harmony.service.GenresService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,8 @@ public class GenresController {
     @Autowired
     private GenresService genresService;
 
-    @Operation(summary = "Получение списка жанров")
+    @Operation(summary = "Получение списка жанров", description = "Возвращает список всех доступных музыкальных жанров")
+    @SecurityRequirement(name = "Bearer Authentication")
     @ApiResponses(value = {
             @ApiResponse(
                 responseCode = "200",
@@ -37,6 +40,7 @@ public class GenresController {
                     schema = @Schema(implementation = GenresResponse.class)
                 )
             ),
+            @ApiResponse(responseCode = "401", description = "Токен невалиден или отсутствует"),
             @ApiResponse(responseCode = "400",description = "Ошибка получения данных")
     })
     @GetMapping("/genres")
