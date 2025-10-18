@@ -16,4 +16,8 @@ public class Genres {
     public String getGenresName() {
         return genresName;
     }
+
+    public void setGenresName(String genresName) {
+        this.genresName = genresName;
+    }
 }

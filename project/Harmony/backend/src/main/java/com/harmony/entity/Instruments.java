@@ -18,7 +18,15 @@ public class Instruments {
         return instrumentName;
     }
 
+    public void setInstrumentName(String instrumentName) {
+        this.instrumentName = instrumentName;
+    }
+
     public String getInstrumentType() {
         return instrumentType;
+    }
+
+    public void setInstrumentType(String instrumentType) {
+        this.instrumentType = instrumentType;
     }
 }
