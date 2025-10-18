@@ -11,7 +11,7 @@ import org.springframework.cache.annotation.EnableCaching;
  * @version 1.0
  */
 @SpringBootApplication
-@EnableCaching
+// @EnableCaching - отключено, так как Redis не настроен
 public class HarmonyApplication {
 
     public static void main(String[] args) {
