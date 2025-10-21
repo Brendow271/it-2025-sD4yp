@@ -1,7 +1,22 @@
-import Profile from "@/app/pages/profile/page";
+'use client'
+
+import React, {useState} from "react";
+import {useAuth} from "./hooks/useAuth";
 
 export default function Home() {
-  return (
-      <Profile />
+    const {logout, isAuthenticated} = useAuth();
+    if (isAuthenticated){
+        return(
+            <button onClick = {logout}>Выйти</button>
+        )
+    }
+    return (
+        <div>
+            <h1>
+                Home
+            </h1>
+
+        </div>
+
   );
 }
