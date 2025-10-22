@@ -4,12 +4,25 @@ import React from 'react'
 
 import {useState} from 'react';
 import EditableTextInput from "../../components/EditableTextInput";
+import {MultiSelect} from "../../components/MultiSelect";
 import Buttons from "../../components/Buttons";
+
+import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
+
+const frameworksList = [
+    { value: "Пианино", label: "Пианино", icon: Turtle },
+    { value: "angular", label: "Angular", icon: Cat },
+    { value: "vue", label: "Vue", icon: Dog },
+    { value: "svelte", label: "Svelte", icon: Rabbit },
+    { value: "ember", label: "Ember", icon: Fish },
+];
 
 export default function Profile() {
     const [text, setText] = useState('Name');
-    const [isEditing, setIsEditing] = useState(false);
     const [tempText, setTempText] = useState(text);
+    const [isEditing, setIsEditing] = useState(false);
+    const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
+    const [tempSelectedFrameworks, setTempSelectedFrameworks] = useState<string[]>(selectedFrameworks);
 
     const handleEdit = () => {
         setTempText(text);
@@ -38,13 +51,30 @@ export default function Profile() {
                        isEditing={isEditing}
                        setTempText={setTempText}
                    />
-                </div>
-                <select name="instrument" id="" className = "border border-1 border-gray-200 p-1 rounded-md">
-                    <option value="">Инструмент</option>
-                    <option value="piano">Фортепиано</option>
-                    <option value="violin">Срипка</option>
-                    <option value="guitar">Гитара</option>
-                </select>
+                />
+                {isEditing ? (
+                    <MultiSelect
+                        options={frameworksList} // Pass your options
+                        onValueChange={setSelectedFrameworks} // Function to update state
+                        defaultValue={selectedFrameworks} // Set initial selected values
+                        placeholder="Выбери музыкальные инструменты" // Customize placeholder
+                        variant="inverted" // Choose a style variant
+                        animation={1} // Optional animation duration
+                        maxCount={10} // Max tags to display before summarizing
+                    />
+                ) : (
+                    <MultiSelect
+                        options={frameworksList} // Pass your options
+                        onValueChange={setTempSelectedFrameworks} // Function to update state
+                        defaultValue={selectedFrameworks} // Set initial selected values
+                        placeholder="Выбери музыкальные инструменты" // Customize placeholder
+                        variant="inverted" // Choose a style variant
+                        disabled={true}
+                        animation={1} // Optional animation duration
+                        maxCount={10} // Max tags to display before summarizing
+                    />
+                )}
+
                 <select name="genre" id="" className = "border border-1 border-gray-200 p-1 rounded-md">
                     <option value="">Жанр</option>
                     <option value="pop">Поп</option>
