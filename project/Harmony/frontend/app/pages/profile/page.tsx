@@ -3,7 +3,8 @@
 import React from 'react'
 
 import {useState} from 'react';
-
+import EditableTextInput from "../../components/EditableTextInput";
+import Buttons from "../../components/Buttons";
 
 export default function Profile() {
     const [text, setText] = useState('Name');
@@ -14,8 +15,7 @@ export default function Profile() {
         setTempText(text);
         setIsEditing(true);
     }
-
-    const handleSave = () => {
+     const handleSave = () => {
         setText(tempText);
         setIsEditing(false);
     };
@@ -26,20 +26,18 @@ export default function Profile() {
     };
 
     return(
-        <div className="flex flex-col items-center justify-center w-full border border-2 min-h-screen">
+        <div className="flex flex-col items-center justify-center w-full">
         <h1 className="text-3xl">Профиль</h1>
-        <div className="flex justify-center gap-4 mt-2">
+        <div className="flex justify-center gap-4">
             <div><img src="/images/Frame%208.png" alt="Avatar"/></div>
             <div className = "flex flex-col w-200 text-xl gap-3">
                 <div>
-                    {isEditing ? (
-                        <>
-                            <input type="text"  placeholder = "Имя" value = {tempText} onChange={(e) => setTempText(e.target.value)} className="text-2xl p-1 border-1 border-black rounded-md"/>
-                            <button onClick={handleSave}>Сохранение</button>
-                            <button onClick={handleCancel}>Отмена</button>
-                        </>
-                    ) : <label className="text-2xl">{text}</label>}
-                    <label htmlFor="">, возраст</label>
+                   <EditableTextInput
+                       text = {text}
+                       tempText = {tempText}
+                       isEditing={isEditing}
+                       setTempText={setTempText}
+                   />
                 </div>
                 <select name="instrument" id="" className = "border border-1 border-gray-200 p-1 rounded-md">
                     <option value="">Инструмент</option>
@@ -59,7 +57,13 @@ export default function Profile() {
                     <option value="spb">Санкт-Петербург</option>
                 </select>
                 <textarea name="about" id="" placeholder="О себе" className = "w-full h-full pl-1 bg-gray-100 resize-none"></textarea>
-                <div className="flex justify-end"><button type="submit" onClick={handleEdit} className="flex justify-center items-center w-15 h-15 border border-2"><img src="/images/edit.png" alt="edit" className="w-10 hover:scale-120 transition"/></button></div>
+                <Buttons
+                    isEditing={isEditing}
+                    setIsEditing={setIsEditing}
+                    edit={handleEdit}
+                    save = {handleSave}
+                    cancel = {handleCancel}
+                />
             </div>
         </div>
         </div>);
