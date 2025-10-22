@@ -26,6 +26,7 @@ import {
     CommandList,
     CommandSeparator,
 } from "./ui/command";
+import {useState} from "react";
 
 /**
  * Variants for the multi-select component to handle different styles.
@@ -79,6 +80,8 @@ interface MultiSelectProps
     /** The default selected values when the component mounts. */
     defaultValue?: string[];
 
+    value?: string[];
+
     /**
      * Placeholder text to be displayed when no values are selected.
      * Optional, defaults to "Select options".
@@ -127,6 +130,7 @@ export const MultiSelect = React.forwardRef<
             onValueChange,
             variant,
             defaultValue = [],
+            value,
             placeholder = "Select options",
             animation = 0,
             maxCount = 3,
@@ -137,10 +141,19 @@ export const MultiSelect = React.forwardRef<
         },
         ref
     ) => {
-        const [selectedValues, setSelectedValues] =
-            React.useState<string[]>(defaultValue);
+        const [internalSelectedValue, setInternalSelectedValue] = useState<string[]>(defaultValue);
+        // const [selectedValues, setSelectedValues] =
+        //     React.useState<string[]>(defaultValue);
         const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
         const [isAnimating, setIsAnimating] = React.useState(false);
+
+        const selectedValues = value !== undefined ? value : internalSelectedValue;
+        const setSelectedValues =(newValues: string[]) =>{
+            if (value === undefined){
+                setInternalSelectedValue(newValues);
+            }
+            onValueChange(newValues);
+        };
 
         const handleInputKeyDown = (
             event: React.KeyboardEvent<HTMLInputElement>
