@@ -14,22 +14,37 @@ public class UserInfo {
     @Column(name = "age", nullable = false)
     private Integer age;
 
-    @Column(name = "genres", nullable = true)
-    private String genres;
+    @Column(name = "genres", nullable = false)
+    private String[] genres;
 
-    @Column(name = "instrument", nullable = true)
-    private String instrument;
+    @Column(name = "instrument", nullable = false)
+    private String[] instrument;
 
-    @Column(name = "location", nullable = true)
+    @Column(name = "location", nullable = false)
     private String location;
 
-    @Column(name = "about", nullable = false)
+    @Column(name = "about", nullable = true)
     private String about;
 
     public UserInfo(){}
 
     public UserInfo(Integer age, String about){
         this.age = age;
+        this.about = about;
+    }
+
+    public UserInfo(Integer age, String[] genres, String[] instrument, String location){
+        this.age = age;
+        this.genres = genres;
+        this.instrument = instrument;
+        this.location = location;
+    }
+
+    public UserInfo(Integer age, String[] genres, String[] instrument, String location, String about){
+        this.age = age;
+        this.genres = genres;
+        this.instrument = instrument;
+        this.location = location;
         this.about = about;
     }
 
@@ -48,19 +63,19 @@ public class UserInfo {
         this.age = age;
     }
 
-    public String getGenres() {
+    public String[] getGenres() {
         return genres;
     }
 
-    public void setGenres(String genres) {
+    public void setGenres(String[] genres) {
         this.genres = genres;
     }
 
-    public String getInstrument() {
+    public String[] getInstrument() {
         return instrument;
     }
 
-    public void setInstrument(String instrument) {
+    public void setInstrument(String[] instrument) {
         this.instrument = instrument;
     }
 
