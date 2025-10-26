@@ -24,6 +24,9 @@ public class UserAuthService {
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Autowired
+    private UserInfoService userInfoService;
+
     public UserAuth registerUser(String name, String email, String password){
 
         if (userAuthRepository.existsByEmail(email)){
@@ -35,6 +38,12 @@ public class UserAuthService {
         String hashedPassword = passwordEncoder.encode(password);
         UserAuth user = new UserAuth(name, hashedPassword, email);
         UserAuth savedUser = userAuthRepository.save(user);
+        
+        try {
+            userInfoService.createDefaultUserInfo(savedUser.getUserId());
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при создании профиля пользователя: " + e.getMessage());
+        }
          
         UserAuth userResponse = new UserAuth(savedUser.getName(), null, savedUser.getEmail());
         userResponse.setUserId(savedUser.getUserId());
