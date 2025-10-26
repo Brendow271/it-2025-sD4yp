@@ -2,6 +2,7 @@ package com.harmony.dto;
 
 public class UserInfoRequest {
 
+    private Long userId;
     private Integer age;
     private String[] genres;
     private String[] instruments;
@@ -9,7 +10,8 @@ public class UserInfoRequest {
     private String about;
     public UserInfoRequest(){}
 
-    public UserInfoRequest(Integer age, String[] genres, String[]instruments, String location, String about){
+    public UserInfoRequest(Long userId, Integer age, String[] genres, String[]instruments, String location, String about){
+        this.userId = userId;
         this.age = age;
         this.genres = genres;
         this.instruments = instruments;
@@ -17,6 +19,7 @@ public class UserInfoRequest {
         this.about = about;
     }
 
+    public Long getUserId() {return userId;}
     public Integer getAge() {
         return age;
     }
