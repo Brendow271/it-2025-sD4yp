@@ -12,8 +12,32 @@ public class UserInfoService {
     @Autowired
     private UserInfoRepository userInfoRepository;
 
-    public UserInfo updateInfo(Integer age, String[] genres, String[] instruments, String location, String about){
-        UserInfo user = new UserInfo(age, genres, instruments, location, about);
-        return userInfoRepository.save(user);
+    public UserInfo createDefaultUserInfo(Long userId) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(userId);
+        userInfo.setAge(18);
+        userInfo.setGenres(new String[]{});
+        userInfo.setInstrument(new String[]{});
+        userInfo.setLocation("");
+        userInfo.setAbout("");
+        
+        return userInfoRepository.save(userInfo);
+    }
+
+    public UserInfo updateInfo(Long userId, Integer age, String[] genres, String[] instruments, String location, String about){
+        try {
+            UserInfo user = userInfoRepository.findById(userId).orElseThrow(() -> 
+                new RuntimeException("Пользователь не найден"));
+
+            if (age != null) user.setAge(age);
+            if (genres != null) user.setGenres(genres);
+            if (instruments != null) user.setInstrument(instruments);
+            if (location != null) user.setLocation(location);
+            if (about != null) user.setAbout(about);
+            
+            return userInfoRepository.save(user);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при обновлении информации: " + e.getMessage());
+        }
     }
 }
