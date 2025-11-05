@@ -2,6 +2,7 @@
 
 import React, {useState} from "react";
 import {useAuth} from "./hooks/useAuth";
+import Profile from "./pages/profile/page";
 
 export default function Home() {
     const {logout, isAuthenticated} = useAuth();
@@ -13,7 +14,7 @@ export default function Home() {
     return (
         <div>
             <h1>
-                Home
+                <Profile/>
             </h1>
 
         </div>

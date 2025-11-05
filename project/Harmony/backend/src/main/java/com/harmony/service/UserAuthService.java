@@ -5,7 +5,6 @@ import com.harmony.repository.UserAuthRepository;
 import com.harmony.utils.JwtUtils;
 import com.harmony.dto.AuthResponse;
 import jakarta.transaction.Transactional;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class ServiceUserAuth {
+public class UserAuthService {
 
     @Autowired
     private UserAuthRepository userAuthRepository;
@@ -24,6 +23,9 @@ public class ServiceUserAuth {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
     public UserAuth registerUser(String name, String email, String password){
 
@@ -36,6 +38,12 @@ public class ServiceUserAuth {
         String hashedPassword = passwordEncoder.encode(password);
         UserAuth user = new UserAuth(name, hashedPassword, email);
         UserAuth savedUser = userAuthRepository.save(user);
+        
+        try {
+            userInfoService.createDefaultUserInfo(savedUser.getUserId());
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при создании профиля пользователя: " + e.getMessage());
+        }
          
         UserAuth userResponse = new UserAuth(savedUser.getName(), null, savedUser.getEmail());
         userResponse.setUserId(savedUser.getUserId());

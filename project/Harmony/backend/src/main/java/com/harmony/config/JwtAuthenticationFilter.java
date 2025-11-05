@@ -1,7 +1,7 @@
 package com.harmony.config;
 
 import com.harmony.entity.UserAuth;
-import com.harmony.service.ServiceUserAuth;
+import com.harmony.service.UserAuthService;
 import com.harmony.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtUtils jwtUtils;
 
     @Autowired
-    private ServiceUserAuth userService;
+    private UserAuthService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

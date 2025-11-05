@@ -11,7 +11,6 @@ import org.springframework.cache.annotation.EnableCaching;
  * @version 1.0
  */
 @SpringBootApplication
-@EnableCaching
 public class HarmonyApplication {
 
     public static void main(String[] args) {
