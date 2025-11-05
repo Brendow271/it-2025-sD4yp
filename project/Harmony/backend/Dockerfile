@@ -1,5 +1,5 @@
 # Multi-stage build для оптимизации размера образа
-FROM maven:3.8-openjdk-17 AS build
+FROM maven:3.9-eclipse-temurin-17 AS build
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
@@ -17,7 +17,9 @@ COPY src ./src
 RUN mvn clean package -DskipTests -B
 
 # Production stage
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
+
+RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
