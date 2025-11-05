@@ -8,6 +8,7 @@ import {MultiSelect} from "../../components/MultiSelect";
 import Buttons from "../../components/Buttons";
 
 import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
+import EditableSelector from "../../components/EditableSelector";
 
 const instrumentsList = [
     { value: "Пианино", label: "Пианино", icon: Turtle },
@@ -40,21 +41,21 @@ export default function Profile() {
     const [tempSelectedInstruments, setTempSelectedInstruments] = useState<string[]>(selectedInstruments);
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
     const [tempSelectedGenres, setTempSelectedGenres] = useState<string[]>(selectedGenres);
-    const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-    const [tempSelectedLocations, setTempSelectedLocations] = useState<string[]>(selectedLocations);
+    const [selectedLocation, setSelectedLocation] = useState('');
+    const [tempSelectedLocation, setTempSelectedLocation] = useState(selectedLocation);
 
     const handleEdit = () => {
         setTempText(text);
         setTempSelectedInstruments(selectedInstruments);
         setTempSelectedGenres(selectedGenres);
-        setTempSelectedLocations(selectedLocations);
+        setTempSelectedLocation(selectedLocation);
         setIsEditing(true);
     }
      const handleSave = () => {
         setText(tempText);
         setSelectedInstruments(tempSelectedInstruments);
          setSelectedGenres(tempSelectedGenres);
-         setSelectedLocations(tempSelectedLocations);
+         setSelectedLocation(tempSelectedLocation);
         setIsEditing(false);
     };
 
@@ -62,7 +63,7 @@ export default function Profile() {
         setTempText(text);
         setTempSelectedInstruments(selectedInstruments);
         setTempSelectedGenres(selectedGenres);
-        setTempSelectedLocations(selectedLocations);
+        setTempSelectedLocation(selectedLocation);
         setIsEditing(false);
     };
 
@@ -98,15 +99,11 @@ export default function Profile() {
                     animation={1} // Optional animation duration
                     maxCount={10} // Max tags to display before summarizing
                 />
-                <MultiSelect
-                    options={locationsList} // Pass your options
-                    onValueChange={setTempSelectedLocations} // Function to update state
-                    value={tempSelectedLocations} // Set initial selected values
-                    placeholder="Выбери город" // Customize placeholder
-                    variant="inverted" // Choose a style variant
-                    disabled = {!isEditing}
-                    animation={1} // Optional animation duration
-                    maxCount={10} // Max tags to display before summarizing
+                <EditableSelector
+                    isEditing = {isEditing}
+                    selectedLocation={selectedLocation}
+                    tempSelectedLocation={tempSelectedLocation}
+                    setTempSelectedLocation={setTempSelectedLocation}
                 />
                 <textarea name="about" id="" placeholder="О себе" className = "w-full h-full pl-1 bg-gray-100 resize-none"></textarea>
                 <Buttons
