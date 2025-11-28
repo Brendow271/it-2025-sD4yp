@@ -45,8 +45,11 @@ services:
       - CACHE_TTL=${CACHE_TTL:-600000}
       
       # File Upload Configuration
-      - MAX_FILE_SIZE=${MAX_FILE_SIZE:-10MB}
-      - MAX_REQUEST_SIZE=${MAX_REQUEST_SIZE:-10MB}
+      - MAX_FILE_SIZE=${MAX_FILE_SIZE:-10485760}
+      - MAX_REQUEST_SIZE=${MAX_REQUEST_SIZE:-10485760}
+      - UPLOAD_IMAGES_PATH=uploads/images
+    volumes:
+      - ./uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
