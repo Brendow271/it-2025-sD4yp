@@ -30,7 +30,9 @@ public class UserPhotoService {
     private static final List<String> ALLOWED_CONTENT_TYPES = Arrays.asList(
         "image/jpeg",
         "image/jpg",
-        "image/png"
+        "image/png",
+        "image/webp",
+        "image/heic"
     );
     
     //10MB = 10 * 1024 * 1024 = 10485760
@@ -70,7 +72,7 @@ public class UserPhotoService {
         
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType.toLowerCase())) {
-            throw new IllegalArgumentException("Недопустимый тип файла. Разрешены: JPEG, PNG, WEBP, GIF");
+            throw new IllegalArgumentException("Недопустимый тип файла. Разрешены: JPEG, PNG, WEBP, HEIC");
         }
     }
     
