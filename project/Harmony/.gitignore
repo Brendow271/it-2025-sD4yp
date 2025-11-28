@@ -42,3 +42,7 @@ build/
 
 # Environment files
 .env
+
+# Uploaded images
+uploads/images/**
+!uploads/images/.gitkeep
