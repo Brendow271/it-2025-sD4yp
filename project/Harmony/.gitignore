@@ -44,5 +44,5 @@ build/
 .env
 
 # Uploaded images
-backend/uploads/images/*
-!backend/uploads/images/.gitkeep
+uploads/images/**
+!uploads/images/.gitkeep
