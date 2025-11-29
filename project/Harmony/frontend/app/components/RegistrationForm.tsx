@@ -7,8 +7,8 @@ export default function RegistrationForm() {
 
     const [formData, setFormData] = useState({
         name: "",
-        email:"",
-        password:"",
+        email: "",
+        password: "",
     });
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
@@ -52,7 +52,7 @@ export default function RegistrationForm() {
     };
 
     return (
-        <div className="flex flex-col justify-center h-full w-100 items-center border border-gray-200 bg-gray-200 px-4 py-4">
+        <div className="flex flex-col justify-center h-full w-full items-center border border-gray-200 bg-gray-200 px-4 py-4">
             <h1 className="mb-4">Регистрация</h1>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
                 <input type="name" name = "name" id = "name" className="bg-white px-2" value = {formData.name} onChange = {handleChange} required placeholder="Username" />
