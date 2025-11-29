@@ -13,7 +13,7 @@ export default function LoginForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
 
-    const {login, isAuthenticated} = useAuth();
+    const {login} = useAuth();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
@@ -44,14 +44,9 @@ export default function LoginForm() {
             setIsLoading(false);
         }
     };
-    if (isAuthenticated) {
-        return (
-            <h1>Вы вошли в систему</h1>
-        );
-    }
 
     return(
-        <div className="flex flex-col justify-center h-full w-100 items-center border border-gray-200 bg-gray-200 px-4 py-4">
+        <div className="flex flex-col justify-center h-full w-full items-center border border-gray-200 bg-gray-200 px-4 py-4">
             <h1 className="mb-4">Аутентификация</h1>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
                 <input type="email" name = "email" id = "email" className="bg-white px-2" value = {formData.email} onChange = {handleChange} required placeholder="Email" />
