@@ -109,8 +109,8 @@ public class MockDataInitializer implements CommandLineRunner {
             MockUser mockUser = mockUsers[i];
             
             if (!userAuthService.isEmailExists(mockUser.email)) {
-                var user = userAuthService.registerUser(mockUser.name, mockUser.email, password);
-                userIds[i] = user.getUserId();
+                var authResponse = userAuthService.registerUser(mockUser.name, mockUser.email, password);
+                userIds[i] = authResponse.getUser().getUserId();
                 
                 userInfoService.updateInfo(
                     userIds[i],
@@ -120,12 +120,12 @@ public class MockDataInitializer implements CommandLineRunner {
                     mockUser.location,
                     mockUser.about
                 );
-
+        
                 UserPhoto photo = new UserPhoto();
                 photo.setUserId(userIds[i]);
                 photo.setImageUrl(mockUser.imageUrl);
                 userPhotoRepository.save(photo);
-
+        
                 logger.info("Создан пользователь: {} ({})", mockUser.name, mockUser.email);
             } else {
                 var existingUser = userAuthService.getUserByEmail(mockUser.email);
