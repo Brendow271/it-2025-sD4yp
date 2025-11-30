@@ -27,7 +27,7 @@ public class UserAuthService {
     @Autowired
     private UserInfoService userInfoService;
 
-    public UserAuth registerUser(String name, String email, String password){
+    public AuthResponse registerUser(String name, String email, String password){
 
         if (userAuthRepository.existsByEmail(email)){
             throw new RuntimeException("Пользователь с данным email:" + email + " уже существует");
@@ -44,13 +44,15 @@ public class UserAuthService {
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при создании профиля пользователя: " + e.getMessage());
         }
+
+        String token = jwtUtils.generateToken(savedUser);
          
         UserAuth userResponse = new UserAuth(savedUser.getName(), null, savedUser.getEmail());
         userResponse.setUserId(savedUser.getUserId());
         userResponse.setCreatedAt(savedUser.getCreatedAt());
         userResponse.setActive(savedUser.isActive());
 
-        return userResponse;
+        return new AuthResponse(token, userResponse);
     }
 
     public AuthResponse loginUser (String email, String password){
