@@ -2,6 +2,7 @@
 
 import React from "react";
 import {useState} from "react";
+import {authCookies} from "./common/cookies";
 
 export default function RegistrationForm() {
 
@@ -17,7 +18,7 @@ export default function RegistrationForm() {
         const{name, value} = e.target;
         setFormData(prev =>({
             ...prev,
-                [name]:value
+            [name]:value
         }));
     };
 
@@ -37,11 +38,17 @@ export default function RegistrationForm() {
             const data = await response.json();
 
             if (response.ok){
-                setMessage('Регистрация прошла успешно');
-                setFormData({name: '', email: '', password: ''});
-                console.log('Регистрация прошла успешно', data);
+                if (data.token){
+                    authCookies.setAuthToken(data.token);
+                    if (data.user){
+                        authCookies.setUserData(data.user);
+                    }
+                    window.location.href = '/pages/profile';
+                } else{
+                    setMessage('Регистрация прошла успешно');
+                }
             } else {
-                setMessage(data.message || 'Ошибка регистрации');
+                setMessage(data.message || data.error || 'Ошибка регистрации');
             }
         } catch (error) {
             setMessage('Ошибка сети или сервера');
