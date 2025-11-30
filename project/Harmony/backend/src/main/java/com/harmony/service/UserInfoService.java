@@ -15,13 +15,31 @@ public class UserInfoService {
     public UserInfo createDefaultUserInfo(Long userId) {
         UserInfo userInfo = new UserInfo();
         userInfo.setUserId(userId);
-        userInfo.setAge(18);
-        userInfo.setGenres(new String[]{});
-        userInfo.setInstrument(new String[]{});
-        userInfo.setLocation("");
-        userInfo.setAbout("");
+        userInfo.setAge(null);
+        userInfo.setGenres(null);
+        userInfo.setInstrument(null);
+        userInfo.setLocation(null);
+        userInfo.setAbout(null);
         
         return userInfoRepository.save(userInfo);
+    }
+
+    public UserInfo getUserInfo(Long userId){
+        return userInfoRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Профиль не найден"));
+    }
+
+    public boolean isProfileComplete(Long userId){
+        UserInfo userInfo = userInfoRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Профиль не найден"));
+
+        return userInfo.getAge() != null
+                && userInfo.getGenres() != null
+                && userInfo.getGenres().length > 0
+                && userInfo.getInstrument() != null
+                && userInfo.getInstrument().length > 0
+                && userInfo.getLocation() != null
+                && !userInfo.getLocation().trim().isEmpty();
     }
 
     public UserInfo updateInfo(Long userId, Integer age, String[] genres, String[] instruments, String location, String about){
