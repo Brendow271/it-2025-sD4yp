@@ -158,19 +158,19 @@ export default function Profile() {
             const userData = authCookies.getUserData();
 
             if (!token || !userData) {
-                alert('Ошибка аутентификации');
+                console.log('Ошибка аутентификации');
                 return;
             }
 
             const currentUserId = userId || userData.userId || userData.id;
 
             if (!currentUserId) {
-                alert('Ошибка: не удалось определить ID пользователя');
+                console.log('Ошибка: не удалось определить ID пользователя');
                 return;
             }
 
             if (!tempAge || tempSelectedInstruments.length === 0 || tempSelectedGenres.length === 0 || !tempSelectedLocation) {
-                alert('Заполните все обязательные поля: возраст, инструменты, жанры, город');
+                console.log('Заполните все обязательные поля: возраст, инструменты, жанры, город');
                 return;
             }
 
@@ -179,7 +179,7 @@ export default function Profile() {
                 : (tempAge === '' ? 0 : Number(tempAge));
 
             if (!ageValue || ageValue <= 0) {
-                alert('Введите корректный возраст');
+                console.log('Введите корректный возраст');
                 return;
             }
 
@@ -213,15 +213,15 @@ export default function Profile() {
                 setIsProfileComplete(complete);
 
                 if (complete) {
-                    alert('Профиль успешно сохранен!');
+                    console.log('Профиль успешно сохранен!');
                 }
             } else {
                 const errorData = await response.json();
-                alert('Ошибка сохранения: ' + (errorData.message || 'Неизвестная ошибка'));
+                console.log('Ошибка сохранения: ' + (errorData.message || 'Неизвестная ошибка'));
             }
         } catch (error) {
             console.error('Ошибка сохранения профиля', error);
-            alert('Ошибка сети или сервера');
+            console.log('Ошибка сети или сервера');
         }
     };
 
