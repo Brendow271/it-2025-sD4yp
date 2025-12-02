@@ -19,6 +19,9 @@ public class SwipeService {
     @Autowired
     private SwipeRepository swipeRepository;
 
+    @Autowired
+    private RecommendationService recommendationService;
+
     public SwipeResponse createSwipe(Long userId1, Long userId2, Boolean decision){
         if (userId1.equals(userId2)){
             throw new RuntimeException("Нельзя свапнуть самого себя");
@@ -43,6 +46,9 @@ public class SwipeService {
         }
 
         Swipe savedSwipe = swipeRepository.save(swipe);
+
+        recommendationService.onSwipe(userId1);
+
         return new SwipeResponse(savedSwipe);
     }
 
