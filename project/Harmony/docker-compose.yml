@@ -85,6 +85,21 @@ services:
     networks:
       - harmony-network
 
+  harmony-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: harmony-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      harmony-backend:
+        condition: service_started
+    networks:
+      - harmony-network
+
   # Nginx Reverse Proxy (опционально)
   nginx:
     image: nginx:alpine
