@@ -2,13 +2,14 @@
 
 import React from "react";
 import {useState} from "react";
+import {authCookies} from "./common/cookies";
 
 export default function RegistrationForm() {
 
     const [formData, setFormData] = useState({
         name: "",
-        email:"",
-        password:"",
+        email: "",
+        password: "",
     });
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
@@ -17,7 +18,7 @@ export default function RegistrationForm() {
         const{name, value} = e.target;
         setFormData(prev =>({
             ...prev,
-                [name]:value
+            [name]:value
         }));
     };
 
@@ -37,11 +38,17 @@ export default function RegistrationForm() {
             const data = await response.json();
 
             if (response.ok){
-                setMessage('Регистрация прошла успешно');
-                setFormData({name: '', email: '', password: ''});
-                console.log('Регистрация прошла успешно', data);
+                if (data.token){
+                    authCookies.setAuthToken(data.token);
+                    if (data.user){
+                        authCookies.setUserData(data.user);
+                    }
+                    window.location.href = '/pages/profile';
+                } else{
+                    setMessage('Регистрация прошла успешно');
+                }
             } else {
-                setMessage(data.message || 'Ошибка регистрации');
+                setMessage(data.message || data.error || 'Ошибка регистрации');
             }
         } catch (error) {
             setMessage('Ошибка сети или сервера');
@@ -52,7 +59,7 @@ export default function RegistrationForm() {
     };
 
     return (
-        <div className="flex flex-col justify-center h-full w-100 items-center border border-gray-200 bg-gray-200 px-4 py-4">
+        <div className="flex flex-col justify-center h-full w-full items-center border border-gray-200 bg-gray-200 px-4 py-4">
             <h1 className="mb-4">Регистрация</h1>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
                 <input type="name" name = "name" id = "name" className="bg-white px-2" value = {formData.name} onChange = {handleChange} required placeholder="Username" />

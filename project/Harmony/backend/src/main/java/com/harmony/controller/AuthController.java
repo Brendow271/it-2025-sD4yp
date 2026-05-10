@@ -42,16 +42,14 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request){
         try {
-            UserAuth user = authService.registerUser(
+            AuthResponse response = authService.registerUser(
                 request.getName(),
                 request.getEmail(),
                 request.getPassword()
             );
 
-            AuthResponse response = new AuthResponse(user);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e){
-
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(error);

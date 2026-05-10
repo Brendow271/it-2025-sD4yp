@@ -14,7 +14,7 @@ services:
       
       # Database Configuration
       - DB_HOST=postgres
-      - DB_PORT=5432
+      - DB_PORT=${DB_PORT:-5432}
       - DB_NAME=${DB_NAME:-harmony_db}
       - DB_USERNAME=${DB_USERNAME:-harmony_user}
       - DB_PASSWORD=${DB_PASSWORD:-harmony_password}
