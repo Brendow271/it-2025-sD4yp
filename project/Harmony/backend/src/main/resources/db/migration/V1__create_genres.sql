@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS genres (
+    genres_name VARCHAR(255) NOT NULL UNIQUE PRIMARY KEY
+);
+
+
