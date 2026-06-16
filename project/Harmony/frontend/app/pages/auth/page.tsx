@@ -1,30 +1,19 @@
 'use client';
 import RegistrationForm from "../../components/RegistrationForm";
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import LoginForm from "../../components/LoginForm";
 import Profile from "../profile/page"
-import {authCookies} from "../../components/common/cookies";
+import {useAuth} from "../../hooks/useAuth";
 
 export default function Auth(){
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
-    const [isAuthentificated, setIsAuthentificated] = useState(false);
+    const {isAuthenticated, isLoading} = useAuth();
 
-    useEffect(() => {
-        const token = authCookies.getAuthToken();
-        setIsAuthentificated(!!token);
-    }, []);
+    if (isLoading) {
+        return null;
+    }
 
-    useEffect(() => {
-        const checkAuth = () => {
-            const token = authCookies.getAuthToken();
-            setIsAuthentificated(!!token);
-        };
-
-        const interval = setInterval(checkAuth, 1000);
-        return () => clearInterval(interval);
-    }, []);
-
-    if (isAuthentificated) {
+    if (isAuthenticated) {
         return <Profile />
     }
 

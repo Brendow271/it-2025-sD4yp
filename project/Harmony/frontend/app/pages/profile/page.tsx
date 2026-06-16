@@ -72,7 +72,7 @@ export default function Profile() {
             const userData = authCookies.getUserData();
 
             if (!token || !userData) {
-                window.location.href = 'pages/auth';
+                window.location.href = '/pages/auth';
                 return;
             }
 
@@ -91,7 +91,7 @@ export default function Profile() {
                 return;
             }
 
-            const response = await fetch(`http://localhost:8080/info/${userId}`, {
+            const response = await fetch(`http://localhost:8080/info/${currentUserId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -109,15 +109,15 @@ export default function Profile() {
                 setTempSelectedInstruments(data.instruments || []);
                 setSelectedGenres(data.genres || []);
                 setTempSelectedGenres(data.genres || []);
+                setSelectedLocation(data.location || '');
+                setTempSelectedLocation(data.location || '');
                 setAbout(data.about || '');
                 setTempAbout(data.about || '');
 
                 const complete = checkProfileComplete(data);
                 setIsProfileComplete(complete);
-                setIsProfileComplete(!complete);
             } else if (response.status === 404) {
                 setIsProfileComplete(false);
-                setIsProfileComplete(true);
             } else {
                 console.error('Ошибка загрузки профиля');
             }
