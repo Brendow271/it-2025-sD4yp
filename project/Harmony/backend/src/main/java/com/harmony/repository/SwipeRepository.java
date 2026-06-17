@@ -22,4 +22,11 @@ public interface SwipeRepository extends JpaRepository<Swipe, Long> {
 
     @Query("SELECT s FROM Swipe s WHERE (s.userId1 = :userId OR s.userId2 = :userId) AND s.decision1 = true AND s.decision2 = true")
     List<Swipe> findMatchesForUser(@Param("userId") Long userId);
+
+    @Query("SELECT s FROM Swipe s WHERE " +
+            "NOT (s.decision1 = true AND s.decision2 = true) AND (" +
+            "(s.userId2 = :userId AND s.decision1 = true AND s.decision2 IS NULL) OR " +
+            "(s.userId1 = :userId AND s.decision2 = true AND (s.decision1 IS NULL OR s.decision1 = false))" +
+            ")")
+    List<Swipe> findIncomingLikesForUser(@Param("userId") Long userId);
 }

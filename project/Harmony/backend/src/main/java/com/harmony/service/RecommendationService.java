@@ -80,19 +80,33 @@ public class RecommendationService {
                 .sorted((a, b) -> Double.compare(b.score, a.score))
                 .collect(Collectors.toList());
 
-        Queue<Long> queue = recommendationQueues.getOrDefault(userId, new LinkedList<>());
-        
+        Queue<Long> queue = recommendationQueues.get(userId);
+        if (queue == null || queue.isEmpty()) {
+            queue = new LinkedList<>();
+        }
+
+        Set<Long> queuedIds = new HashSet<>(queue);
+
         for (ScoredUser scoredUser : scoredUsers) {
             if (queue.size() >= QUEUE_SIZE) break;
-            queue.offer(scoredUser.userId);
+            if (!queuedIds.contains(scoredUser.userId)) {
+                queue.offer(scoredUser.userId);
+                queuedIds.add(scoredUser.userId);
+            }
         }
-        
+
         recommendationQueues.put(userId, queue);
     }
 
     private Set<Long> getSwipedUserIds(Long userId) {
         List<Swipe> swipes = swipeRepository.findAllByUserId(userId);
         return swipes.stream()
+                .filter(swipe -> {
+                    if (swipe.getUserId1().equals(userId)) {
+                        return swipe.getDecision1() != null;
+                    }
+                    return swipe.getDecision2() != null;
+                })
                 .map(swipe -> {
                     if (swipe.getUserId1().equals(userId)){
                         return swipe.getUserId2();
@@ -180,6 +194,56 @@ public class RecommendationService {
 
     public void invalidateQueue(Long userId) {
         recommendationQueues.remove(userId);
+    }
+
+    public int refillRejectedQueue(Long userId) {
+        recommendationQueues.remove(userId);
+
+        if (!userInfoService.isProfileComplete(userId)) {
+            return 0;
+        }
+
+        Set<Long> rejectedUserIds = getRejectedUserIds(userId);
+        if (rejectedUserIds.isEmpty()) {
+            return 0;
+        }
+
+        UserInfo currentUser = userInfoRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+
+        List<UserInfo> candidates = userInfoRepository.findAll().stream()
+                .filter(user -> rejectedUserIds.contains(user.getUserId()))
+                .filter(user -> userInfoService.isProfileComplete(user.getUserId()))
+                .collect(Collectors.toList());
+
+        List<ScoredUser> scoredUsers = candidates.stream()
+                .map(candidate -> new ScoredUser(
+                        candidate.getUserId(),
+                        calculateScore(currentUser, candidate)
+                ))
+                .sorted((a, b) -> Double.compare(b.score, a.score))
+                .collect(Collectors.toList());
+
+        Queue<Long> queue = new LinkedList<>();
+        for (ScoredUser scoredUser : scoredUsers) {
+            queue.offer(scoredUser.userId);
+        }
+
+        recommendationQueues.put(userId, queue);
+        return queue.size();
+    }
+
+    private Set<Long> getRejectedUserIds(Long userId) {
+        List<Swipe> swipes = swipeRepository.findAllByUserId(userId);
+        return swipes.stream()
+                .filter(swipe -> {
+                    if (swipe.getUserId1().equals(userId)) {
+                        return Boolean.FALSE.equals(swipe.getDecision1());
+                    }
+                    return Boolean.FALSE.equals(swipe.getDecision2());
+                })
+                .map(swipe -> swipe.getUserId1().equals(userId) ? swipe.getUserId2() : swipe.getUserId1())
+                .collect(Collectors.toSet());
     }
 }
 

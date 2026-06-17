@@ -2,6 +2,7 @@ package com.harmony.controller;
 
 import com.harmony.service.RecommendationService;
 import com.harmony.service.UserInfoService;
+import com.harmony.service.UserPhotoService;
 import com.harmony.dto.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,6 +29,9 @@ public class RecommendationController {
     @Autowired
     private UserInfoService userInfoService;
 
+    @Autowired
+    private UserPhotoService userPhotoService;
+
     @Operation(summary = "Получить следующую рекомендацию", description = "Возвращает следующую карточку пользователя из очереди рекомендаций")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Рекомендация успешно получена",
@@ -46,11 +50,22 @@ public class RecommendationController {
             }
 
             var userInfo = userInfoService.getUserInfo(recommendedUserId);
-            return ResponseEntity.ok(new UserInfoResponse(userInfo));
+            UserInfoResponse response = new UserInfoResponse(userInfo);
+            response.setPhotoUrl(userPhotoService.getLatestPhotoUrl(recommendedUserId));
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
+    }
+
+    @PostMapping("/refresh/{userId}")
+    public ResponseEntity<?> refreshRecommendations(@PathVariable Long userId) {
+        int count = recommendationService.refillRejectedQueue(userId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Очередь рекомендаций обновлена");
+        response.put("count", count);
+        return ResponseEntity.ok(response);
     }
 }

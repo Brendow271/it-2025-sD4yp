@@ -2,6 +2,7 @@ package com.harmony.controller;
 
 import com.harmony.dto.SwipeRequest;
 import com.harmony.dto.SwipeResponse;
+import com.harmony.dto.UserCardResponse;
 import com.harmony.service.SwipeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -62,6 +63,30 @@ public class SwipeController {
         } catch (Exception e){
             Map<String, String> error = new HashMap<>();
             error.put("error", "Ошибка при получении мэтчей: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    @GetMapping("/matches/{userId}/cards")
+    public ResponseEntity<?> getMatchCards(@PathVariable Long userId) {
+        try {
+            List<UserCardResponse> cards = swipeService.getMatchCards(userId);
+            return ResponseEntity.ok(cards);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Ошибка при получении мэтчей: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    @GetMapping("/likes/{userId}")
+    public ResponseEntity<?> getIncomingLikes(@PathVariable Long userId) {
+        try {
+            List<UserCardResponse> cards = swipeService.getIncomingLikeCards(userId);
+            return ResponseEntity.ok(cards);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Ошибка при получении лайков: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }

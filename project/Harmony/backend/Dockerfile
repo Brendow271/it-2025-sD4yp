@@ -30,19 +30,19 @@ RUN adduser --disabled-password --gecos '' --shell /bin/bash appuser && \
 
 # Копируем собранное приложение из build stage
 COPY --from=build /app/target/harmony-backend.war ./app.war
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 
-# Устанавливаем права доступа
-RUN chown appuser:appuser app.war
-
-# Переключаемся на пользователя appuser
-USER appuser
+RUN sed -i 's/\r$//' /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh && \
+    mkdir -p /app/uploads/images && \
+    chown -R appuser:appuser /app
 
 # Открываем порт
 EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
 
 # Точка входа
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.war"]
+ENTRYPOINT ["sh", "/docker-entrypoint.sh"]

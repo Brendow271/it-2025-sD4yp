@@ -1,35 +1,16 @@
 package com.harmony.dto;
 
-import com.harmony.entity.UserInfo;
-
-public class UserInfoResponse {
+public class UserCardResponse {
     private Long userId;
+    private String name;
     private Integer age;
     private String[] genres;
     private String[] instruments;
     private String location;
     private String about;
     private String photoUrl;
-    private boolean success;
-    private String message;
 
-    public UserInfoResponse() {}
-
-    public UserInfoResponse(UserInfo userInfo) {
-        this.userId = userInfo.getUserId();
-        this.age = userInfo.getAge();
-        this.genres = userInfo.getGenres();
-        this.instruments = userInfo.getInstrument();
-        this.location = userInfo.getLocation();
-        this.about = userInfo.getAbout();
-        this.success = true;
-        this.message = "Успешно";
-    }
-
-    public UserInfoResponse(boolean success, String message) {
-        this.success = success;
-        this.message = message;
-    }
+    public UserCardResponse() {}
 
     public Long getUserId() {
         return userId;
@@ -37,6 +18,14 @@ public class UserInfoResponse {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getAge() {
@@ -85,21 +74,5 @@ public class UserInfoResponse {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }

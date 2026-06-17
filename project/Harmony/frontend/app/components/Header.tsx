@@ -4,7 +4,7 @@ import React from "react";
 const Header = () =>{
     return(
         <header className = "grid grid-cols-3 items-center text-black bg-gray-300 px-8 h-20 mb-6">
-            <div className="flex justify-start h-full"><Link href={'/'} className="flex items-center px-3 hover:bg-gray-400"><img className="w-8 h-8" src="/assets/settings.png" alt="Настройки"/></Link></div>
+            <div className="flex justify-start h-full"><Link href={'/pages/settings'} className="flex items-center px-3 hover:bg-gray-400"><img className="w-8 h-8" src="/assets/settings.png" alt="Настройки"/></Link></div>
             <div className="flex h-full justify-center text-2xl">
                 <Link href={'/'} className="flex items-center px-3">
                     <div className="hover:text-3xl">H</div>

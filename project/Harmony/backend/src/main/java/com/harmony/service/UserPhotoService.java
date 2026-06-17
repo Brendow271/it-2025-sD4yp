@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,14 +42,19 @@ public class UserPhotoService {
 
     public UserPhoto uploadPhoto(Long userId, MultipartFile file) throws IOException {
         validateFile(file);
-        
+
+        Path basePath = Paths.get(uploadPath).toAbsolutePath().normalize();
+        if (!Files.exists(basePath)) {
+            Files.createDirectories(basePath);
+        }
+
         String filename = generateUniqueFilename(file.getOriginalFilename());
-        Path userDir = Paths.get(uploadPath, userId.toString());
-        
+        Path userDir = basePath.resolve(userId.toString());
+
         if (!Files.exists(userDir)) {
             Files.createDirectories(userDir);
         }
-        
+
         Path filePath = userDir.resolve(filename);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         
@@ -87,6 +93,19 @@ public class UserPhotoService {
     public List<UserPhoto> getUserPhotos(Long userId) {
         return userPhotoRepository.findByUserId(userId);
     }
+
+    public String getLatestPhotoUrl(Long userId) {
+        List<UserPhoto> photos = userPhotoRepository.findByUserId(userId);
+        if (photos.isEmpty()) {
+            return null;
+        }
+
+        return photos.stream()
+                .filter(photo -> photo.getImageUrl() != null && photo.getImageUrl().startsWith("/uploads/"))
+                .max(Comparator.comparing(UserPhoto::getCreatedAt))
+                .map(UserPhoto::getImageUrl)
+                .orElse(null);
+    }
     
     public void deletePhoto(Long imageId, Long userId) throws IOException {
         UserPhoto photo = userPhotoRepository.findById(imageId)
@@ -97,8 +116,8 @@ public class UserPhotoService {
         }
         
         String imageUrl = photo.getImageUrl();
-        String filePath = imageUrl.replace("/uploads/images/", uploadPath + "/");
-        Path path = Paths.get(filePath);
+        String relativePath = imageUrl.replace("/uploads/images/", "");
+        Path path = Paths.get(uploadPath).toAbsolutePath().normalize().resolve(relativePath);
         
         if (Files.exists(path)) {
             Files.delete(path);

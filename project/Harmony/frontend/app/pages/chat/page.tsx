@@ -1,9 +1,13 @@
-import {ProtectedRoute} from "../../components/ProtectedRoute";
-import React from 'react'
-export default function Chat(){
-    return(
+'use client';
+
+import React from 'react';
+import { ProtectedRoute } from "../../components/ProtectedRoute";
+import MatchList from "../../components/MatchList";
+
+export default function Chat() {
+    return (
         <ProtectedRoute>
-            <h1>Chat</h1>
+            <MatchList />
         </ProtectedRoute>
-    )
+    );
 }

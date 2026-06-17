@@ -1,7 +1,10 @@
 package com.harmony.service;
 
 import com.harmony.dto.SwipeResponse;
+import com.harmony.dto.UserCardResponse;
 import com.harmony.entity.Swipe;
+import com.harmony.entity.UserAuth;
+import com.harmony.entity.UserInfo;
 import com.harmony.repository.SwipeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,15 @@ public class SwipeService {
 
     @Autowired
     private RecommendationService recommendationService;
+
+    @Autowired
+    private UserInfoService userInfoService;
+
+    @Autowired
+    private UserAuthService userAuthService;
+
+    @Autowired
+    private UserPhotoService userPhotoService;
 
     public SwipeResponse createSwipe(Long userId1, Long userId2, Boolean decision){
         if (userId1.equals(userId2)){
@@ -56,6 +68,38 @@ public class SwipeService {
         return matches.stream()
                 .map(SwipeResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    public List<UserCardResponse> getMatchCards(Long userId) {
+        return swipeRepository.findMatchesForUser(userId).stream()
+                .map(swipe -> buildUserCard(getOtherUserId(swipe, userId)))
+                .collect(Collectors.toList());
+    }
+
+    public List<UserCardResponse> getIncomingLikeCards(Long userId) {
+        return swipeRepository.findIncomingLikesForUser(userId).stream()
+                .map(swipe -> buildUserCard(getOtherUserId(swipe, userId)))
+                .collect(Collectors.toList());
+    }
+
+    private Long getOtherUserId(Swipe swipe, Long currentUserId) {
+        return swipe.getUserId1().equals(currentUserId) ? swipe.getUserId2() : swipe.getUserId1();
+    }
+
+    private UserCardResponse buildUserCard(Long userId) {
+        UserAuth auth = userAuthService.getUserById(userId);
+        UserInfo info = userInfoService.getUserInfo(userId);
+
+        UserCardResponse card = new UserCardResponse();
+        card.setUserId(userId);
+        card.setName(auth.getName());
+        card.setAge(info.getAge());
+        card.setGenres(info.getGenres());
+        card.setInstruments(info.getInstrument());
+        card.setLocation(info.getLocation());
+        card.setAbout(info.getAbout());
+        card.setPhotoUrl(userPhotoService.getLatestPhotoUrl(userId));
+        return card;
     }
 
     public List<SwipeResponse> getSwipeHistory(Long userId){

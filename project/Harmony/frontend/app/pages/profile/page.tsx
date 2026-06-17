@@ -5,32 +5,28 @@ import {useState, useEffect} from 'react';
 import EditableTextInput from "../../components/EditableTextInput";
 import {MultiSelect} from "../../components/MultiSelect";
 import Buttons from "../../components/Buttons";
-import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
 import EditableSelector from "../../components/EditableSelector";
+import PhotoDisplay from "../../components/PhotoDisplay";
 import {authCookies} from "../../components/common/cookies";
+import {API_BASE, pickDisplayPhotoUrl} from "../../lib/api";
 
-const instrumentsList = [
-    { value: "Пианино", label: "Пианино", icon: Turtle },
-    { value: "Гитара", label: "Гитара", icon: Cat },
-    { value: "Скрипка", label: "Скрипка", icon: Dog },
-    { value: "Барабан", label: "Барабан", icon: Rabbit },
-    { value: "Труба", label: "Труба", icon: Fish },
-];
+interface ListOption {
+    value: string;
+    label: string;
+}
 
-const genresList = [
-    { value: "Поп", label: "Поп", icon: Turtle },
-    { value: "Рок", label: "Рок", icon: Cat },
-    { value: "Рэп", label: "Рэп", icon: Dog },
-    { value: "Джаз", label: "Джаз", icon: Rabbit },
-    { value: "Блюз", label: "Блюз", icon: Fish },
-];
+interface InstrumentResponse {
+    name: string;
+    type: string;
+}
 
-const locationsList = [
-    { value: "Cанкт-Петербург", label: "Санкт-Петербург", icon: Turtle },
-    { value: "Москва", label: "Москва", icon: Cat },
-    { value: "Хабаровск", label: "Хабаровск", icon: Dog },
-    { value: "Краснодар", label: "Краснодар", icon: Rabbit },
-];
+interface GenreResponse {
+    name: string;
+}
+
+interface LocationResponse {
+    name: string;
+}
 
 interface UserInfo{
     userId: number;
@@ -39,6 +35,11 @@ interface UserInfo{
     instruments: string[];
     location: string;
     about?: string;
+}
+
+interface UserPhoto {
+    imageId: number;
+    imageUrl: string;
 }
 
 export default function Profile() {
@@ -53,14 +54,19 @@ export default function Profile() {
     const [age, setAge] = useState<number | ''>('');
     const [tempAge, setTempAge] = useState<number | ''>('');
 
+    const [instrumentsList, setInstrumentsList] = useState<ListOption[]>([]);
     const [selectedInstruments, setSelectedInstruments] = useState<string[]>([]);
     const [tempSelectedInstruments, setTempSelectedInstruments] = useState<string[]>(selectedInstruments);
+    const [genresList, setGenresList] = useState<ListOption[]>([]);
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
     const [tempSelectedGenres, setTempSelectedGenres] = useState<string[]>(selectedGenres);
+    const [locationsList, setLocationsList] = useState<ListOption[]>([]);
     const [selectedLocation, setSelectedLocation] = useState('');
     const [tempSelectedLocation, setTempSelectedLocation] = useState(selectedLocation);
     const [about, setAbout] = useState('');
     const [tempAbout, setTempAbout] = useState(about);
+    const [photos, setPhotos] = useState<UserPhoto[]>([]);
+    const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
     useEffect(() => {
         loadUserProfile();
@@ -90,6 +96,13 @@ export default function Profile() {
                 setIsLoading(false);
                 return;
             }
+
+            await Promise.all([
+                loadInstruments(token),
+                loadGenres(token),
+                loadLocations(token),
+                loadPhotos(token, Number(currentUserId)),
+            ]);
 
             const response = await fetch(`http://localhost:8080/info/${currentUserId}`, {
                 method: 'GET',
@@ -127,6 +140,137 @@ export default function Profile() {
             setIsLoading(false);
         }
     }
+
+    const loadInstruments = async (token: string) => {
+        try {
+            const response = await fetch('http://localhost:8080/list/instruments', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const data: InstrumentResponse[] = await response.json();
+                setInstrumentsList(data.map((instrument) => ({
+                    value: instrument.name,
+                    label: instrument.name,
+                })));
+            } else {
+                console.error('Ошибка загрузки списка инструментов');
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки списка инструментов:', error);
+        }
+    };
+
+    const loadGenres = async (token: string) => {
+        try {
+            const response = await fetch('http://localhost:8080/list/genres', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const data: GenreResponse[] = await response.json();
+                setGenresList(data.map((genre) => ({
+                    value: genre.name,
+                    label: genre.name,
+                })));
+            } else {
+                console.error('Ошибка загрузки списка жанров');
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки списка жанров:', error);
+        }
+    };
+
+    const loadLocations = async (token: string) => {
+        try {
+            const response = await fetch('http://localhost:8080/list/locations', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const data: LocationResponse[] = await response.json();
+                setLocationsList(data.map((location) => ({
+                    value: location.name,
+                    label: location.name,
+                })));
+            } else {
+                console.error('Ошибка загрузки списка городов');
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки списка городов:', error);
+        }
+    };
+
+    const loadPhotos = async (token: string, currentUserId: number) => {
+        try {
+            const response = await fetch(`${API_BASE}/photo/user/${currentUserId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const data: UserPhoto[] = await response.json();
+                setPhotos(data);
+            } else {
+                console.error('Ошибка загрузки фотографий');
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки фотографий:', error);
+        }
+    };
+
+    const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const token = authCookies.getAuthToken();
+        const userData = authCookies.getUserData();
+        const currentUserId = userId || userData?.userId || userData?.id;
+
+        if (!token || !currentUserId) return;
+
+        setIsUploadingPhoto(true);
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch(`${API_BASE}/photo/upload`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formData,
+            });
+
+            if (response.ok) {
+                const photo: UserPhoto = await response.json();
+                setPhotos((prev) => [...prev, photo]);
+            } else {
+                const errorData = await response.json();
+                console.error('Ошибка загрузки фото:', errorData.error);
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки фото:', error);
+        } finally {
+            setIsUploadingPhoto(false);
+            e.target.value = '';
+        }
+    };
 
     const checkProfileComplete = (info: UserInfo | null): boolean => {
         if (!info) return false;
@@ -257,7 +401,25 @@ export default function Profile() {
                 <p className="text-gray-600 mb-4">Пожалуйста, заполните обязательные поля для завершения регистрации</p>
             )}
             <div className="flex justify-center gap-4">
-                <div><img src="/images/Frame%208.png" alt="Avatar"/></div>
+                <div className="flex flex-col items-center gap-2 w-48">
+                    <PhotoDisplay
+                        imageUrl={pickDisplayPhotoUrl(photos)}
+                        alt="Фото профиля"
+                        className="w-48 h-48 object-cover bg-gray-200 rounded-md"
+                    />
+                    {isEditing && (
+                        <label className="w-full text-center cursor-pointer border border-black rounded-md px-2 py-1 text-sm hover:bg-gray-100">
+                            {isUploadingPhoto ? 'Загрузка...' : 'Загрузить фото'}
+                            <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp,image/heic"
+                                className="hidden"
+                                onChange={handlePhotoUpload}
+                                disabled={isUploadingPhoto}
+                            />
+                        </label>
+                    )}
+                </div>
                 <div className="flex flex-col w-200 text-xl gap-3">
                     <EditableTextInput
                         text={text}
@@ -306,6 +468,7 @@ export default function Profile() {
                         selectedLocation={selectedLocation}
                         tempSelectedLocation={tempSelectedLocation}
                         setTempSelectedLocation={setTempSelectedLocation}
+                        locations={locationsList}
                     />
                     {isEditing ? (
                         <textarea
